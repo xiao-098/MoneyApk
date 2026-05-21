@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=ZCOOL+KuaiLe&family=JetBrains+Mono:wght@400;600&display=swap');
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  --paper: #FFFEF9;
+  --coral: #E8927C;
+  --ink: #3D3D3D;
+  --watercolor-green: #7EB8A6;
+  --rose-gray: #C88B9E;
+  --lavender: #9B8EC4;
+  --watercolor-yellow: #E8C87C;
+  --sky-blue: #7CAED4;
+  --caramel: #D4A57C;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(232,200,124,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(122,174,212,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(155,142,196,0.03) 0%, transparent 70%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@layer components {
+  .sticker-card {
+    @apply bg-white rounded-2xl;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1.5px solid rgba(61,61,61,0.06);
+  }
+
+  .sticker-bounce {
+    animation: stickerBounce 0.5s ease-in-out;
+  }
+
+  .doodle-shadow {
+    box-shadow: 2px 3px 0px rgba(61,61,61,0.08);
+  }
+
+  .chat-bubble-bot {
+    @apply bg-white rounded-2xl rounded-tl-sm;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1.5px solid rgba(61,61,61,0.06);
+  }
+
+  .chat-bubble-user {
+    @apply text-white rounded-2xl rounded-tr-sm;
+    background-color: var(--coral);
+  }
+
+  .input-doodle {
+    @apply bg-white rounded-full px-5 py-3 w-full;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1.5px solid rgba(61,61,61,0.1);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+  }
+
+  .input-doodle:focus {
+    border-color: var(--coral);
+    box-shadow: 0 0 0 3px rgba(232,146,124,0.15);
+  }
+
+  .btn-primary {
+    @apply font-bold py-2.5 px-6 rounded-full transition-all duration-200;
+    background-color: var(--coral);
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(232,146,124,0.35);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .nav-item {
+    @apply flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors duration-200;
+    color: var(--ink);
+    opacity: 0.5;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  .nav-item.active {
+    opacity: 1;
+    color: var(--coral);
+  }
+
+  .progress-bar {
+    @apply h-3 rounded-full overflow-hidden;
+    background-color: rgba(61,61,61,0.06);
+  }
+
+  .progress-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+}
+
+.sticker-tilt-1 { transform: rotate(-3deg); }
+.sticker-tilt-2 { transform: rotate(2deg); }
+.sticker-tilt-3 { transform: rotate(-1.5deg); }
+.sticker-tilt-4 { transform: rotate(3.5deg); }
+
+@keyframes stickerBounce {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+  70% { transform: scale(0.95) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(61,61,61,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(61,61,61,0.25); }

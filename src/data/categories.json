@@ -1,0 +1,14 @@
+[
+  { "id": "food", "name": "餐饮", "emoji": "🍜", "animal": "bear", "color": "#E8C87C", "sortOrder": 1 },
+  { "id": "transport", "name": "交通", "emoji": "🚗", "animal": "rabbit", "color": "#7CAED4", "sortOrder": 2 },
+  { "id": "shopping", "name": "购物", "emoji": "🛒", "animal": "cat", "color": "#F0B8B8", "sortOrder": 3 },
+  { "id": "entertainment", "name": "娱乐", "emoji": "🎮", "animal": "fox", "color": "#9B8EC4", "sortOrder": 4 },
+  { "id": "medical", "name": "医疗", "emoji": "🏥", "animal": "dog", "color": "#A8D8C8", "sortOrder": 5 },
+  { "id": "education", "name": "教育", "emoji": "📚", "animal": "panda", "color": "#B8B0A8", "sortOrder": 6 },
+  { "id": "housing", "name": "住房", "emoji": "🏠", "animal": "pig", "color": "#C88B9E", "sortOrder": 7 },
+  { "id": "daily", "name": "日用", "emoji": "💡", "animal": "duck", "color": "#F5E6C8", "sortOrder": 8 },
+  { "id": "clothing", "name": "服饰", "emoji": "👗", "animal": "deer", "color": "#E8B8A0", "sortOrder": 9 },
+  { "id": "gift", "name": "礼物", "emoji": "🎁", "animal": "penguin", "color": "#A8D0E8", "sortOrder": 10 },
+  { "id": "coffee", "name": "咖啡", "emoji": "☕", "animal": "hamster", "color": "#D4A57C", "sortOrder": 11 },
+  { "id": "other", "name": "其他", "emoji": "✨", "animal": "star", "color": "#E8D47C", "sortOrder": 12 }
+]
