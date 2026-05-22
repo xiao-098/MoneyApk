@@ -31,6 +31,17 @@ const tabs = [
       </svg>
     ),
   },
+  {
+    id: 'savings',
+    label: '存钱',
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? 'var(--coral)' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-0.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2" />
+        <path d="M2 9.1C2.9 5.3 7.2 2.7 12 3" />
+        <circle cx="14" cy="10" r="1" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Layout({ children, activeTab = 'chat', onTabChange }) {

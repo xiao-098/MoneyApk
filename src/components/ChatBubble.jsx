@@ -39,6 +39,7 @@ export default function ChatBubble({ type = 'bot', children, record }) {
 
 function RecordCard({ record, getCategoryById }) {
   const category = getCategoryById(record.category_id || record.categoryId);
+  const isIncome = (record.type || 'expense') === 'income';
 
   return (
     <div className="flex items-center gap-3 py-1">
@@ -48,8 +49,11 @@ function RecordCard({ record, getCategoryById }) {
           {record.note || category?.name || '未分类'}
         </div>
       </div>
-      <div className="text-sm font-bold whitespace-nowrap" style={{ color: 'var(--coral)' }}>
-        ¥{Number(record.amount).toFixed(2)}
+      <div
+        className="text-sm font-bold whitespace-nowrap"
+        style={{ color: isIncome ? 'var(--watercolor-green)' : 'var(--coral)' }}
+      >
+        {isIncome ? '+' : '-'}¥{Number(record.amount).toFixed(2)}
       </div>
     </div>
   );

@@ -3,9 +3,11 @@ import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, Responsive
 import useRecordStore from '../store/useRecordStore';
 import useCategoryStore from '../store/useCategoryStore';
 import { getToday, getCurrentMonth, getLast7Days, getDayOfWeek, isToday, isThisWeek, isThisMonth } from '../utils/date';
+import ReceiptModal from './ReceiptModal';
 
 export default function Dashboard() {
   const [period, setPeriod] = useState('month');
+  const [showReceipt, setShowReceipt] = useState(false);
   const { records } = useRecordStore();
   const { categories } = useCategoryStore();
 
@@ -65,6 +67,19 @@ export default function Dashboard() {
     return Object.entries(dayMap).map(([day, amount]) => ({ day, amount }));
   }, [filteredRecords, period]);
 
+  // Daily subtotals grouped by date for week/month views
+  const dailySubtotals = useMemo(() => {
+    if (period === 'day') return [];
+    const dateMap = {};
+    filteredRecords.forEach(r => {
+      const d = getDate(r);
+      if (!dateMap[d]) dateMap[d] = { date: d, total: 0, count: 0 };
+      dateMap[d].total += r.amount;
+      dateMap[d].count += 1;
+    });
+    return Object.values(dateMap).sort((a, b) => b.date.localeCompare(a.date));
+  }, [filteredRecords, period]);
+
   const lastMonthTotal = useMemo(() => {
     const now = new Date();
     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -107,7 +122,7 @@ export default function Dashboard() {
           {{ day: '今日', week: '本周', month: '本月' }[period]}总支出
         </p>
         <p className="text-3xl font-bold font-mono" style={{ color: 'var(--coral)' }}>
-          ¥ {totalExpense.toFixed(2)}
+          -¥{totalExpense.toFixed(2)}
         </p>
         {percentChange !== null && (
           <p className={`text-sm mt-1 ${parseFloat(percentChange) <= 0 ? 'text-emerald-500' : 'text-red-400'}`}>
@@ -173,7 +188,7 @@ export default function Dashboard() {
               <div key={item.name} className="flex items-center gap-3">
                 <span className="text-lg">{item.emoji}</span>
                 <span className="text-sm flex-1">{item.name}</span>
-                <span className="text-sm font-mono font-medium">¥{item.value.toFixed(2)}</span>
+                <span className="text-sm font-mono font-medium" style={{ color: 'var(--coral)' }}>-¥{item.value.toFixed(2)}</span>
                 <span className="text-xs text-ink/40 w-12 text-right">
                   {((item.value / totalExpense) * 100).toFixed(0)}%
                 </span>
@@ -186,22 +201,92 @@ export default function Dashboard() {
       {/* Daily detail for day view */}
       {period === 'day' && dailyRecords.length > 0 && (
         <div className="sticker-card p-4">
-          <p className="text-xs text-ink/50 mb-3 font-medium">今日明细</p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs text-ink/50 font-medium">今日明细</p>
+            <button
+              onClick={() => setShowReceipt(true)}
+              className="w-7 h-7 rounded-full flex items-center justify-center transition-colors"
+              style={{ backgroundColor: 'rgba(61,61,61,0.06)' }}
+              title="查看小票"
+            >
+              <span className="text-sm">🧾</span>
+            </button>
+          </div>
           <div className="space-y-2">
             {dailyRecords.map(r => {
               const cat = categories.find(c => c.id === getCatId(r));
+              const isIncome = (r.type || 'expense') === 'income';
               return (
                 <div key={r.id} className="flex items-center gap-3 py-1.5">
                   <span className="text-lg">{cat?.emoji || '✨'}</span>
                   <span className="text-sm flex-1">{r.note || cat?.name}</span>
-                  <span className="text-sm font-mono" style={{ color: 'var(--coral)' }}>
-                    ¥{r.amount.toFixed(2)}
+                  <span
+                    className="text-sm font-mono font-medium"
+                    style={{ color: isIncome ? 'var(--watercolor-green)' : 'var(--coral)' }}
+                  >
+                    {isIncome ? '+' : '-'}¥{r.amount.toFixed(2)}
                   </span>
                 </div>
               );
             })}
           </div>
+          <button
+            onClick={() => setShowReceipt(true)}
+            className="w-full mt-4 py-2.5 rounded-full text-sm font-medium transition-colors"
+            style={{
+              backgroundColor: 'rgba(232,146,124,0.08)',
+              color: 'var(--coral)',
+              border: '1.5px dashed var(--coral)',
+              cursor: 'pointer',
+            }}
+          >
+            🧾 打印小票
+          </button>
         </div>
+      )}
+
+      {/* Daily subtotals for week/month views */}
+      {period !== 'day' && dailySubtotals.length > 0 && (
+        <div className="sticker-card p-4">
+          <p className="text-xs text-ink/50 mb-3 font-medium">
+            {period === 'week' ? '每日小计' : '每日小计'}
+          </p>
+          <div className="space-y-2">
+            {dailySubtotals.map(item => (
+              <div key={item.date} className="flex items-center gap-3 py-1.5">
+                <span className="text-xs w-16 text-ink/50">
+                  {item.date.slice(5)}
+                </span>
+                <span className="text-xs text-ink/30 flex-1">
+                  {getDayOfWeek(item.date)} · {item.count}笔
+                </span>
+                <span className="text-sm font-mono font-medium" style={{ color: 'var(--coral)' }}>
+                  -¥{item.total.toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div
+            className="flex items-center justify-between mt-3 pt-3"
+            style={{ borderTop: '1px dashed rgba(61,61,61,0.1)' }}
+          >
+            <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>
+              合计
+            </span>
+            <span className="text-lg font-bold font-mono" style={{ color: 'var(--coral)' }}>
+              -¥{totalExpense.toFixed(2)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Receipt Modal */}
+      {showReceipt && (
+        <ReceiptModal
+          date={getToday()}
+          records={dailyRecords}
+          onClose={() => setShowReceipt(false)}
+        />
       )}
 
       {/* Weekly bar view */}
@@ -222,7 +307,7 @@ export default function Dashboard() {
                     }}
                   />
                 </div>
-                <span className="text-xs font-mono w-16 text-right">¥{item.amount.toFixed(0)}</span>
+                <span className="text-xs font-mono w-16 text-right" style={{ color: 'var(--coral)' }}>-¥{item.amount.toFixed(0)}</span>
               </div>
             ))}
           </div>

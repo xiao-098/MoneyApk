@@ -29,6 +29,7 @@ const useRecordStore = create(
       },
 
       addRecord: async (record) => {
+        const recordType = record.type || 'expense'
         const newRecord = {
           id: record.id || Date.now().toString() + Math.random().toString(36).slice(2, 7),
           user_id: record.user_id,
@@ -36,6 +37,7 @@ const useRecordStore = create(
           category_id: record.category_id || record.categoryId,
           note: record.note || null,
           record_date: record.record_date || record.date || new Date().toISOString().split('T')[0],
+          type: recordType,
           created_at: record.created_at || new Date().toISOString(),
         }
 
@@ -49,6 +51,7 @@ const useRecordStore = create(
                 category_id: record.category_id || record.categoryId,
                 note: record.note || null,
                 record_date: record.record_date || record.date || new Date().toISOString().split('T')[0],
+                type: recordType,
               })
               .select()
               .single()
@@ -128,6 +131,26 @@ const useRecordStore = create(
       getMonthTotal: (monthStr) => {
         return get()
           .records.filter((r) => (r.record_date || r.date || '').startsWith(monthStr))
+          .reduce((sum, r) => sum + r.amount, 0)
+      },
+
+      getMonthIncome: (monthStr) => {
+        return get()
+          .records.filter(
+            (r) =>
+              (r.record_date || r.date || '').startsWith(monthStr) &&
+              (r.type || 'expense') === 'income'
+          )
+          .reduce((sum, r) => sum + r.amount, 0)
+      },
+
+      getMonthExpense: (monthStr) => {
+        return get()
+          .records.filter(
+            (r) =>
+              (r.record_date || r.date || '').startsWith(monthStr) &&
+              (r.type || 'expense') === 'expense'
+          )
           .reduce((sum, r) => sum + r.amount, 0)
       },
     }),

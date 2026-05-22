@@ -10,5 +10,9 @@
   { "id": "clothing", "name": "服饰", "emoji": "👗", "animal": "deer", "color": "#E8B8A0", "sortOrder": 9 },
   { "id": "gift", "name": "礼物", "emoji": "🎁", "animal": "penguin", "color": "#A8D0E8", "sortOrder": 10 },
   { "id": "coffee", "name": "咖啡", "emoji": "☕", "animal": "hamster", "color": "#D4A57C", "sortOrder": 11 },
-  { "id": "other", "name": "其他", "emoji": "✨", "animal": "star", "color": "#E8D47C", "sortOrder": 12 }
+  { "id": "other", "name": "其他", "emoji": "✨", "animal": "star", "color": "#E8D47C", "sortOrder": 12 },
+  { "id": "salary", "name": "工资", "emoji": "💰", "animal": "bear", "color": "#7EB8A6", "sortOrder": 13, "type": "income" },
+  { "id": "bonus", "name": "奖金", "emoji": "🎉", "animal": "fox", "color": "#E8D47C", "sortOrder": 14, "type": "income" },
+  { "id": "investment_income", "name": "投资", "emoji": "📈", "animal": "panda", "color": "#9B8EC4", "sortOrder": 15, "type": "income" },
+  { "id": "other_income", "name": "其他收入", "emoji": "💵", "animal": "star", "color": "#A8D8C8", "sortOrder": 16, "type": "income" }
 ]
