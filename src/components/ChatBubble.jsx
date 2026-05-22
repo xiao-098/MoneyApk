@@ -38,7 +38,7 @@ export default function ChatBubble({ type = 'bot', children, record }) {
 }
 
 function RecordCard({ record, getCategoryById }) {
-  const category = getCategoryById(record.categoryId);
+  const category = getCategoryById(record.category_id || record.categoryId);
 
   return (
     <div className="flex items-center gap-3 py-1">

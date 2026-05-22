@@ -7,7 +7,7 @@ import { formatTime } from '../utils/date';
 export default function RecordItem({ record, onEdit, onDelete }) {
   const getCategoryById = useCategoryStore((s) => s.getCategoryById);
   const [showActions, setShowActions] = useState(false);
-  const category = getCategoryById(record.categoryId);
+  const category = getCategoryById(record.category_id || record.categoryId);
 
   return (
     <motion.div
