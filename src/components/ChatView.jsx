@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import CategoryPicker from './CategoryPicker';
+import RecordItem from './RecordItem';
 import { parseInput } from '../utils/parser';
 import useRecordStore from '../store/useRecordStore';
 import useBudgetStore from '../store/useBudgetStore';
@@ -25,6 +26,21 @@ export default function ChatView() {
   const [showPicker, setShowPicker] = useState(false);
   const [pendingParsed, setPendingParsed] = useState(null);
   const scrollRef = useRef(null);
+
+  const todayStats = useMemo(() => {
+    const today = getToday();
+    const todayRecords = records.filter((r) => (r.record_date || r.date) === today);
+    const total = todayRecords.reduce((sum, r) => sum + r.amount, 0);
+    // Find top category
+    const catCount = {};
+    todayRecords.forEach((r) => {
+      const cid = r.category_id || r.categoryId;
+      catCount[cid] = (catCount[cid] || 0) + r.amount;
+    });
+    const topCatId = Object.entries(catCount).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const topCat = categories.find((c) => c.id === topCatId);
+    return { total, count: todayRecords.length, topCat, recentRecords: todayRecords.slice(0, 5) };
+  }, [records, categories]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -160,8 +176,65 @@ export default function ChatView() {
         </div>
       </div>
 
+      {/* Today summary card */}
+      <div className="px-4 pt-3 pb-1">
+        <motion.div
+          className="sticker-card p-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs" style={{ color: 'rgba(61,61,61,0.4)' }}>今日消费</p>
+              <p className="text-2xl font-bold font-mono mt-0.5" style={{ color: 'var(--coral)' }}>
+                ¥{todayStats.total.toFixed(2)}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs" style={{ color: 'rgba(61,61,61,0.4)' }}>
+                {todayStats.count} 笔记录
+              </p>
+              {todayStats.topCat && (
+                <p className="text-xs mt-1" style={{ color: 'rgba(61,61,61,0.5)' }}>
+                  {todayStats.topCat.emoji} {todayStats.topCat.name}最多
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Recent records as mini chips */}
+          {todayStats.recentRecords.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: '1px solid rgba(61,61,61,0.06)' }}>
+              {todayStats.recentRecords.map((r) => {
+                const cat = categories.find((c) => c.id === (r.category_id || r.categoryId));
+                return (
+                  <div
+                    key={r.id}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
+                    style={{ backgroundColor: `${cat?.color || '#E8D47C'}15`, color: 'var(--ink)' }}
+                  >
+                    <span>{cat?.emoji || '✨'}</span>
+                    <span className="font-medium">{r.note || cat?.name}</span>
+                    <span className="font-mono font-bold" style={{ color: 'var(--coral)' }}>
+                      ¥{Number(r.amount).toFixed(0)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {todayStats.count === 0 && (
+            <p className="text-xs mt-2" style={{ color: 'rgba(61,61,61,0.3)' }}>
+              还没有消费记录，告诉我你今天花了多少吧~
+            </p>
+          )}
+        </motion.div>
+      </div>
+
       {/* Chat messages area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto pt-4 pb-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto pt-2 pb-4">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div
