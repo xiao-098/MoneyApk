@@ -57,7 +57,7 @@ export default function ChatView() {
     return null;
   };
 
-  const handleSend = (text) => {
+  const handleSend = async (text) => {
     const parsed = parseInput(text);
 
     // Always show user message
@@ -80,7 +80,7 @@ export default function ChatView() {
 
     if (parsed.category) {
       // Category found — save directly
-      const record = addRecord({
+      const record = await addRecord({
         amount: parsed.amount,
         note: parsed.note,
         categoryId: parsed.category.id,
@@ -107,10 +107,10 @@ export default function ChatView() {
     }
   };
 
-  const handleCategorySelect = (category) => {
+  const handleCategorySelect = async (category) => {
     if (!pendingParsed) return;
 
-    const record = addRecord({
+    const record = await addRecord({
       amount: pendingParsed.amount,
       note: pendingParsed.note,
       categoryId: category.id,
