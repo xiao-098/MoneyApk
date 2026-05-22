@@ -117,19 +117,22 @@ export default function SavingsGoal() {
               <label className="text-xs text-ink/50 font-medium mb-1.5 block">
                 目标金额
               </label>
-              <div className="relative">
-                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-base font-bold pointer-events-none" style={{ color: 'rgba(61,61,61,0.4)' }}>
-                  ¥
-                </span>
+              <div className="flex items-center gap-2">
                 <input
                   type="number"
                   value={targetAmount}
                   onChange={(e) => setTargetAmount(e.target.value)}
                   placeholder="0.00"
-                  className="input-doodle pl-12 text-sm font-mono"
+                  className="input-doodle flex-1 text-sm font-mono"
                   min="0"
                   step="0.01"
                 />
+                <span
+                  className="text-sm font-bold flex-shrink-0"
+                  style={{ color: 'rgba(61,61,61,0.5)' }}
+                >
+                  元
+                </span>
               </div>
             </div>
 

@@ -131,23 +131,23 @@ export default function AddRecordModal({ onClose, onSave }) {
               <label className="text-xs text-ink/50 font-medium mb-2 block">
                 金额
               </label>
-              <div className="relative">
-                <span
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-base font-bold pointer-events-none"
-                  style={{ color: 'rgba(61,61,61,0.4)' }}
-                >
-                  ¥
-                </span>
+              <div className="flex items-center gap-2">
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="input-doodle pl-12 text-lg font-mono font-bold"
+                  className="input-doodle flex-1 text-lg font-mono font-bold"
                   min="0"
                   step="0.01"
                   autoFocus
                 />
+                <span
+                  className="text-lg font-bold flex-shrink-0"
+                  style={{ color: 'rgba(61,61,61,0.5)' }}
+                >
+                  元
+                </span>
               </div>
             </div>
 
