@@ -118,7 +118,7 @@ export default function SavingsGoal() {
                 目标金额
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold" style={{ color: 'var(--ink)' }}>
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-base font-bold pointer-events-none" style={{ color: 'rgba(61,61,61,0.4)' }}>
                   ¥
                 </span>
                 <input
@@ -126,7 +126,7 @@ export default function SavingsGoal() {
                   value={targetAmount}
                   onChange={(e) => setTargetAmount(e.target.value)}
                   placeholder="0.00"
-                  className="input-doodle pl-10 text-sm font-mono"
+                  className="input-doodle pl-12 text-sm font-mono"
                   min="0"
                   step="0.01"
                 />

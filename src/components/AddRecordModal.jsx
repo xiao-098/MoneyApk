@@ -133,8 +133,8 @@ export default function AddRecordModal({ onClose, onSave }) {
               </label>
               <div className="relative">
                 <span
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold"
-                  style={{ color: 'var(--ink)' }}
+                  className="absolute left-5 top-1/2 -translate-y-1/2 text-base font-bold pointer-events-none"
+                  style={{ color: 'rgba(61,61,61,0.4)' }}
                 >
                   ¥
                 </span>
@@ -143,7 +143,7 @@ export default function AddRecordModal({ onClose, onSave }) {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="0.00"
-                  className="input-doodle pl-10 text-lg font-mono font-bold"
+                  className="input-doodle pl-12 text-lg font-mono font-bold"
                   min="0"
                   step="0.01"
                   autoFocus
