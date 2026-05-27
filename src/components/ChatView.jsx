@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import CategoryPicker from './CategoryPicker';
-import RecordItem from './RecordItem';
+import StickerAnimal from './StickerAnimal';
 import { parseInput } from '../utils/parser';
 import useRecordStore from '../store/useRecordStore';
 import useBudgetStore from '../store/useBudgetStore';
@@ -31,7 +31,6 @@ export default function ChatView() {
     const today = getToday();
     const todayRecords = records.filter((r) => (r.record_date || r.date) === today);
     const total = todayRecords.reduce((sum, r) => sum + r.amount, 0);
-    // Find top category
     const catCount = {};
     todayRecords.forEach((r) => {
       const cid = r.category_id || r.categoryId;
@@ -41,6 +40,21 @@ export default function ChatView() {
     const topCat = categories.find((c) => c.id === topCatId);
     return { total, count: todayRecords.length, topCat, recentRecords: todayRecords.slice(0, 5) };
   }, [records, categories]);
+
+  const categoryBar = useMemo(() => {
+    if (todayStats.recentRecords.length === 0) return [];
+    const catAmounts = {};
+    todayStats.recentRecords.forEach((r) => {
+      const cid = r.category_id || r.categoryId;
+      catAmounts[cid] = (catAmounts[cid] || 0) + r.amount;
+    });
+    return Object.entries(catAmounts)
+      .map(([id, amount]) => {
+        const cat = categories.find((c) => c.id === id);
+        return { id, amount, color: cat?.color || '#E8D47C', name: cat?.name || '' };
+      })
+      .sort((a, b) => b.amount - a.amount);
+  }, [todayStats, categories]);
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -76,7 +90,6 @@ export default function ChatView() {
   const handleSend = async (text) => {
     const parsed = parseInput(text);
 
-    // Always show user message
     setMessages((prev) => [
       ...prev,
       { id: Date.now().toString(), type: 'user', text },
@@ -95,7 +108,6 @@ export default function ChatView() {
     }
 
     if (parsed.category) {
-      // Category found — save directly
       const record = await addRecord({
         amount: parsed.amount,
         note: parsed.note,
@@ -117,7 +129,6 @@ export default function ChatView() {
         },
       ]);
     } else {
-      // No category — show picker
       setPendingParsed({ amount: parsed.amount, note: parsed.note });
       setShowPicker(true);
     }
@@ -153,46 +164,44 @@ export default function ChatView() {
 
   return (
     <div className="flex flex-col h-full max-w-lg mx-auto relative">
-      {/* Header */}
+      {/* Header — 手账风 */}
       <div
         className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b px-4 py-3"
         style={{ borderColor: 'rgba(61,61,61,0.06)' }}
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-2xl"
-            style={{ backgroundColor: 'var(--watercolor-yellow)', opacity: 0.8 }}
-          >
-            🐻
+          <div className="sticker-tilt-2">
+            <StickerAnimal animal="bear" size={36} />
           </div>
           <div>
-            <h1 className="text-lg font-bold" style={{ color: 'var(--ink)' }}>
+            <h1 className="text-lg font-bold font-hand" style={{ color: 'var(--ink)' }}>
               小熊记账助手
             </h1>
-            <p className="text-xs" style={{ color: 'rgba(61,61,61,0.4)' }}>
+            <p className="text-xs" style={{ color: 'rgba(61,61,61,0.45)' }}>
               随时告诉我你的花销~
             </p>
           </div>
         </div>
       </div>
 
-      {/* Today summary card */}
+      {/* Today summary card — 手账风 */}
       <div className="px-4 pt-3 pb-1">
         <motion.div
-          className="sticker-card p-4"
+          className="journal-card p-4"
+          style={{ transform: 'rotate(-0.5deg)' }}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs" style={{ color: 'rgba(61,61,61,0.4)' }}>今日消费</p>
+              <p className="text-xs font-hand" style={{ color: 'rgba(61,61,61,0.45)' }}>今日消费</p>
               <p className="text-2xl font-bold font-mono mt-0.5" style={{ color: 'var(--coral)' }}>
                 ¥{todayStats.total.toFixed(2)}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs" style={{ color: 'rgba(61,61,61,0.4)' }}>
+              <p className="text-xs" style={{ color: 'rgba(61,61,61,0.45)' }}>
                 {todayStats.count} 笔记录
               </p>
               {todayStats.topCat && (
@@ -203,16 +212,42 @@ export default function ChatView() {
             </div>
           </div>
 
+          {/* Mini category color bar */}
+          {categoryBar.length > 0 && (
+            <div className="mt-3">
+              <div className="category-bar-track">
+                {categoryBar.map((seg) => (
+                  <div
+                    key={seg.id}
+                    className="category-bar-fill"
+                    style={{
+                      width: `${(seg.amount / todayStats.total) * 100}%`,
+                      backgroundColor: seg.color,
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5">
+                {categoryBar.slice(0, 4).map((seg) => (
+                  <span key={seg.id} className="flex items-center gap-1 text-[10px]" style={{ color: 'rgba(61,61,61,0.45)' }}>
+                    <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: seg.color }} />
+                    {seg.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Recent records as mini chips */}
           {todayStats.recentRecords.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: '1px solid rgba(61,61,61,0.06)' }}>
+            <div className="flex flex-wrap gap-2 mt-3 pt-3" style={{ borderTop: '1px dashed rgba(61,61,61,0.1)' }}>
               {todayStats.recentRecords.map((r) => {
                 const cat = categories.find((c) => c.id === (r.category_id || r.categoryId));
                 return (
                   <div
                     key={r.id}
                     className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs"
-                    style={{ backgroundColor: `${cat?.color || '#E8D47C'}15`, color: 'var(--ink)' }}
+                    style={{ backgroundColor: `${cat?.color || '#E8D47C'}20`, color: 'var(--ink)' }}
                   >
                     <span>{cat?.emoji || '✨'}</span>
                     <span className="font-medium">{r.note || cat?.name}</span>
@@ -235,6 +270,26 @@ export default function ChatView() {
 
       {/* Chat messages area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto pt-2 pb-4">
+        {/* Empty state — 大小熊 + 手写引导 */}
+        {messages.length === 1 && todayStats.count === 0 && (
+          <motion.div
+            className="flex flex-col items-center justify-center py-10 px-6 text-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <div style={{ animation: 'floatBear 3s ease-in-out infinite' }}>
+              <StickerAnimal animal="bear" size={80} />
+            </div>
+            <p className="font-hand text-lg mt-4" style={{ color: 'var(--ink)' }}>
+              今天还没有消费哦~
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'rgba(61,61,61,0.35)' }}>
+              告诉小熊你花了什么，帮你记下来
+            </p>
+          </motion.div>
+        )}
+
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div
@@ -250,7 +305,6 @@ export default function ChatView() {
           ))}
         </AnimatePresence>
 
-        {/* Category picker — shown inline when no category matched */}
         {showPicker && pendingParsed && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -265,7 +319,7 @@ export default function ChatView() {
         )}
       </div>
 
-      {/* Input bar — fixed above bottom nav */}
+      {/* Input bar */}
       <div className="sticky bottom-0 z-40" style={{ paddingBottom: '56px' }}>
         <ChatInput onSend={handleSend} />
       </div>

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import CategoryBadge from './CategoryBadge';
+import StickerAnimal from './StickerAnimal';
 import useCategoryStore from '../store/useCategoryStore';
 
 const bubbleVariants = {
@@ -13,12 +14,17 @@ export default function ChatBubble({ type = 'bot', children, record }) {
 
   return (
     <motion.div
-      className={`flex ${isBot ? 'justify-start' : 'justify-end'} mb-3 px-4`}
+      className={`flex ${isBot ? 'justify-start items-end' : 'justify-end'} mb-3 px-4`}
       variants={bubbleVariants}
       initial="hidden"
       animate="visible"
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
+      {isBot && (
+        <div className="bot-avatar-ring mr-1.5 mb-0.5">
+          <StickerAnimal animal="bear" size={20} />
+        </div>
+      )}
       <div
         className={`max-w-[80%] px-4 py-3 ${
           isBot ? 'chat-bubble-bot' : 'chat-bubble-user'
