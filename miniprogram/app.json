@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "小熊记账",
+    "navigationBarBackgroundColor": "#FFFEF9",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFFEF9",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json"
+}
